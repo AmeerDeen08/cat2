@@ -151,7 +151,8 @@ svg {
   width: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: var(--space-6) var(--space-4) calc(var(--nav-height) + var(--space-8));
+  padding: var(--space-6) var(--space-4)
+    calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + var(--space-8));
 }
 
 .page-header {
@@ -324,7 +325,7 @@ svg {
   grid-template-columns: repeat(3, 1fr);
   max-width: var(--content-max);
   margin: 0 auto;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 8px);
 }
 
 .bottom-nav__link {
