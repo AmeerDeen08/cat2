@@ -6,8 +6,19 @@
     <meta name="theme-color" content="#0f172a" />
     <meta name="description" content="VIT CAT2 examination schedule dashboard" />
     <title>CAT2 · Schedule</title>
-    <script type="module" crossorigin src="/cat2/assets/index-bqlfExpD.js"></script>
-    <link rel="stylesheet" crossorigin href="/cat2/assets/index-NP4ADQzY.css">
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('cat2-theme')
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          }
+          document.documentElement.setAttribute('data-theme', t)
+        } catch (e) {}
+      })()
+    </script>
+    <script type="module" crossorigin src="/cat2/assets/index-DTnMjtCm.js"></script>
+    <link rel="stylesheet" crossorigin href="/cat2/assets/index-DE4NsOTO.css">
   </head>
   <body>
     <div id="root"></div>
