@@ -23,7 +23,7 @@
   --color-green: #047857;
   --color-green-soft: #d1fae5;
   --color-green-border: #6ee7b7;
-  --color-slate: #64748b;
+  --color-slate: #475569;
   --color-slate-soft: #e2e8f0;
 
   /* spacing scale (4px base) */
@@ -57,6 +57,32 @@
   --nav-height: 60px;
   --content-max: 640px;
   --tap-min: 48px;
+}
+
+/* ---------- Dark theme ---------- */
+:root[data-theme='dark'] {
+  --color-bg: #0b1220;
+  --color-surface: #111a2e;
+  --color-surface-muted: #0f1728;
+  --color-text: #e5eaf3;
+  --color-text-muted: #a4b2c8;
+  --color-text-faint: #8f9fb8;
+  --color-border: #22304f;
+  --color-primary: #818cf8;
+  --color-primary-strong: #a5b4fc;
+  --color-primary-soft: #1d2a52;
+  --color-primary-ink: #d9e1ff;
+  --color-amber: #fcd34d;
+  --color-amber-soft: #3b2b0e;
+  --color-amber-border: #b45309;
+  --color-green: #6ee7b7;
+  --color-green-soft: #0f2a21;
+  --color-green-border: #059669;
+  --color-slate: #cbd5e1;
+  --color-slate-soft: #26344e;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
 /* ---------- Reset / base ---------- */
@@ -277,7 +303,7 @@ svg {
 
 .badge--neutral {
   background: var(--color-slate-soft);
-  color: #475569;
+  color: var(--color-slate);
 }
 
 /* ---------- Bottom navigation ---------- */
@@ -333,6 +359,61 @@ svg {
   height: 24px;
 }
 
+/* ---------- Theme toggle ---------- */
+.theme-toggle {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  right: 14px;
+  z-index: 60;
+  background: transparent;
+  border: 0;
+  padding: 4px;
+  border-radius: var(--radius-full);
+}
+
+.theme-toggle__track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 60px;
+  height: 30px;
+  padding: 0 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 140ms ease;
+}
+
+.theme-toggle__track-icon {
+  position: relative;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-faint);
+}
+
+.theme-toggle__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  transition: transform 200ms ease;
+}
+
+:root[data-theme='dark'] .theme-toggle__knob {
+  transform: translateX(30px);
+}
+
+:root[data-theme='dark'] .bottom-nav {
+  background: rgba(17, 26, 46, 0.92);
+}
+
 /* ---------- Stack / layout utilities ---------- */
 .stack > * + * {
   margin-top: var(--space-3);
@@ -347,7 +428,7 @@ svg {
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-xl);
-  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-strong));
+  background: linear-gradient(180deg, #4f46e5, #4338ca);
   color: #fff;
   padding: var(--space-8) var(--space-6);
   box-shadow: var(--shadow-lg);
@@ -668,7 +749,7 @@ svg {
 }
 
 .detail-hero {
-  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-strong));
+  background: linear-gradient(180deg, #4f46e5, #4338ca);
   border: none;
   color: #fff;
   box-shadow: var(--shadow-md);

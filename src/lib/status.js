@@ -132,6 +132,20 @@ export function formatTime(timeStr) {
   return `${hour12}:${String(m).padStart(2, '0')} ${suffix}`
 }
 
+// Duration between two "HH:MM" times -> "1 hr 30 min" | "1 hr" | "45 min"
+export function formatDuration(startTime, endTime) {
+  if (!startTime || !endTime) return null
+  const [sh, sm] = startTime.split(':').map(Number)
+  const [eh, em] = endTime.split(':').map(Number)
+  const mins = eh * 60 + em - (sh * 60 + sm)
+  if (mins <= 0) return null
+  const h = Math.floor(mins / 60)
+  const m = mins % 60
+  if (h && m) return `${h} hr ${m} min`
+  if (h) return `${h} hr`
+  return `${m} min`
+}
+
 // "09:30" -> "9:30" (minutes dropped when :00)
 export function formatTimeCompact(timeStr) {
   if (!timeStr) return null

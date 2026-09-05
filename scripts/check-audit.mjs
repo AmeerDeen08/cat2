@@ -9,7 +9,8 @@ const PORT = process.argv[2] || '4173'
 const BASE = `http://localhost:${PORT}/cat2/`
 const CDP_PORT = 9231
 const widths = [320, 375, 390, 414, 768, 1024, 1280]
-const routes = ['#/', '#/schedule', '#/notes', '#/exam/cat2-1']
+const routes = ['#/', '#/schedule', '#/notes', '#/exam/MAENG501']
+const themes = ['light', 'dark']
 
 const userDataDir = mkdtempSync(join(tmpdir(), 'cat2-audit-'))
 const chrome = spawn(
@@ -72,10 +73,12 @@ async function run() {
     for (const route of routes) {
       await send('Page.navigate', { url: BASE + route })
       await sleep(450)
-      const r = await evalExpr(
-        `(() => { const d=document.documentElement; return { overflowX: d.scrollWidth>d.clientWidth+1, active: document.querySelector('.bottom-nav__link--active span')?.textContent ?? null } })()`
-      )
-      check(`${w}px ${route}`, !r.overflowX, r.active ? `nav=${r.active}` : '')
+      for (const theme of themes) {
+        const r = await evalExpr(
+          `(() => { document.documentElement.setAttribute('data-theme','${theme}'); const d=document.documentElement; return { overflowX: d.scrollWidth>d.clientWidth+1, active: document.querySelector('.bottom-nav__link--active span')?.textContent ?? null } })()`
+        )
+        check(`${w}px ${route} (${theme})`, !r.overflowX, r.active ? `nav=${r.active}` : '')
+      }
     }
   }
 
@@ -90,14 +93,14 @@ async function run() {
   check('nav tap target >=44px', targets.nav >= 44, `${Math.round(targets.nav)}px`)
   check('quick-card tap target >=48px', targets.quick >= 48, `${Math.round(targets.quick)}px`)
 
-  await send('Page.navigate', { url: BASE + '#/exam/cat2-1' })
+  await send('Page.navigate', { url: BASE + '#/exam/MAENG501' })
   await sleep(450)
   const detailTargets = await evalExpr(`(() => ({
     back: document.querySelector('.back-btn').getBoundingClientRect().height,
     rows: [...document.querySelectorAll('.detail-row')].length,
   }))()`)
   check('back-btn tap target >=44px', detailTargets.back >= 44, `${Math.round(detailTargets.back)}px`)
-  check('detail rows present', detailTargets.rows >= 3, `${detailTargets.rows} rows`)
+  check('detail rows present', detailTargets.rows >= 6, `${detailTargets.rows} rows`)
 
   await send('Page.navigate', { url: BASE + '#/notes' })
   await sleep(450)
@@ -106,12 +109,13 @@ async function run() {
   }))()`)
   check('notes CTA >=48px', btnTargets.btn >= 48, `${Math.round(btnTargets.btn)}px`)
 
-  // ---- computed colors (contrast fixes applied) ----
-  check('--text-faint is #66788c (AA)', (await evalExpr(`getComputedStyle(document.documentElement).getPropertyValue('--color-text-faint').trim()`)) === '#66788c')
-  check(
-    'hero label is #dce4ff (AA)',
-    /220,\s*228,\s*255/.test(await evalExpr(`getComputedStyle(document.querySelector('.hero__label')).color`)) || true ? true : false
-  )
+  // ---- computed colors (theme-aware faint token) ----
+  const tokenCheck = await evalExpr(`(() => {
+    const theme = document.documentElement.getAttribute('data-theme')
+    const faint = getComputedStyle(document.documentElement).getPropertyValue('--color-text-faint').trim()
+    return { theme, faint, ok: theme === 'light' ? faint === '#66788c' : faint === '#8f9fb8' }
+  })()`)
+  check(`theme-aware faint token (${tokenCheck.theme})`, tokenCheck.ok, tokenCheck.faint)
 
   console.log(failures ? `\n${failures} FAILURES` : '\nALL CHECKS PASSED')
   ws.close()

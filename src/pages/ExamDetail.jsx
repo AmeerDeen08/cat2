@@ -5,6 +5,7 @@ import {
   getDayName,
   formatDate,
   formatTime,
+  formatDuration,
 } from '../lib/status.js'
 import { useNow } from '../lib/use-now.js'
 import {
@@ -15,6 +16,11 @@ import {
   IconNotes,
   IconSparkle,
   IconCheck,
+  IconTag,
+  IconHash,
+  IconUsers,
+  IconAlarm,
+  IconTimer,
 } from '../components/icons.jsx'
 
 const statusCopy = {
@@ -74,6 +80,7 @@ export default function ExamDetail() {
   const time = exam.startTime
     ? `${formatTime(exam.startTime)}${exam.endTime ? ` – ${formatTime(exam.endTime)}` : ''}`
     : null
+  const duration = formatDuration(exam.startTime, exam.endTime)
 
   const StatusIcon = status === 'today' ? IconSparkle : status === 'completed' ? IconCheck : IconCalendar
 
@@ -83,7 +90,10 @@ export default function ExamDetail() {
 
       <section className="detail-hero card" aria-label="Exam overview">
         <div className="detail-hero__top">
-          <span className="detail-hero__code">{exam.subjectCode}</span>
+          <span className="detail-hero__code">
+            {exam.subjectCode}
+            {exam.examType ? ` · ${exam.examType}` : ''}
+          </span>
           <span className={`badge badge--${status}${status === 'completed' ? '' : ' badge--dot'}`}>
             {statusCopy[status]}
           </span>
@@ -98,8 +108,13 @@ export default function ExamDetail() {
 
       <section className="card detail-list" aria-label="Exam details">
         <DetailRow icon={IconCalendar} label="Date" value={`${formatDate(exam.date)} · ${getDayName(exam.date)}`} />
-        <DetailRow icon={IconClock} label="Time" value={time} />
+        <DetailRow icon={IconClock} label="Exam time" value={time} />
+        <DetailRow icon={IconAlarm} label="Reporting" value={exam.reportingTime ? formatTime(exam.reportingTime) : null} />
+        <DetailRow icon={IconTimer} label="Duration" value={duration} />
         <DetailRow icon={IconPin} label="Venue" value={exam.venue} />
+        <DetailRow icon={IconTag} label="Type" value={exam.examType} />
+        <DetailRow icon={IconHash} label="Course ID" value={exam.courseId} />
+        <DetailRow icon={IconUsers} label="Batch / Group" value={exam.batch} />
         <DetailRow icon={IconSparkle} label="Faculty" value={exam.faculty} />
         <DetailRow icon={IconNotes} label="Notes" value={exam.notes} />
       </section>

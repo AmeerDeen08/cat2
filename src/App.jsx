@@ -1,5 +1,6 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import BottomNav from './components/BottomNav.jsx'
+import ThemeToggle from './components/ThemeToggle.jsx'
 import Home from './pages/Home.jsx'
 import Schedule from './pages/Schedule.jsx'
 import ExamDetail from './pages/ExamDetail.jsx'
@@ -9,6 +10,7 @@ export default function App() {
   return (
     <HashRouter>
       <div className="app-shell">
+        <ThemeToggle />
         <div className="app-content">
           <Routes>
             <Route path="/" element={<Home />} />

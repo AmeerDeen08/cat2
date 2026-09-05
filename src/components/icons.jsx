@@ -87,3 +87,68 @@ export function IconCheck(props) {
     </svg>
   )
 }
+
+export function IconTag(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <path d="M3.5 12V4.5H11l9 9-6.5 6.5-10-10Z" />
+      <circle cx="7.5" cy="9" r="1.2" />
+    </svg>
+  )
+}
+
+export function IconHash(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <path d="M9.5 4 7.5 20M16.5 4l-2 16M5 9h15M4 15h15" />
+    </svg>
+  )
+}
+
+export function IconUsers(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <circle cx="9" cy="8.5" r="3" />
+      <path d="M3.5 20c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5" />
+      <circle cx="17" cy="9" r="2.3" />
+      <path d="M15.5 15.4c1.8.3 3.4 1.4 4 3.6" />
+    </svg>
+  )
+}
+
+export function IconTimer(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <circle cx="12" cy="13.5" r="7" />
+      <path d="M12 2.5v2M9.5 2.5h5" />
+      <path d="M12 10v3.8l2 1.3" />
+    </svg>
+  )
+}
+
+export function IconAlarm(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <circle cx="12" cy="13.5" r="7" />
+      <path d="M12 10v3.5l2.2 1.5" />
+      <path d="M5 4 2.5 7M19 4l2.5 3" />
+    </svg>
+  )
+}
+
+export function IconSun(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <circle cx="12" cy="12" r="4.2" />
+      <path d="M12 2.5v2M12 19.5v2M21.5 12h-2M4.5 12h-2M18.4 5.6l-1.4 1.4M7 17l-1.4 1.4M18.4 18.4 17 17M7 7 5.6 5.6" />
+    </svg>
+  )
+}
+
+export function IconMoon(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <path d="M20 13.5A8 8 0 0 1 10.5 4 8 8 0 1 0 20 13.5Z" />
+    </svg>
+  )
+}

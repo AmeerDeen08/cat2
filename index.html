@@ -6,6 +6,17 @@
     <meta name="theme-color" content="#0f172a" />
     <meta name="description" content="VIT CAT2 examination schedule dashboard" />
     <title>CAT2 · Schedule</title>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('cat2-theme')
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          }
+          document.documentElement.setAttribute('data-theme', t)
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
