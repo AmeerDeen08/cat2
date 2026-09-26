@@ -44,6 +44,25 @@ export function IconArrowLeft(props) {
   )
 }
 
+export function IconArrowRight(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  )
+}
+
+// Exam-hall chair used to flag seating details.
+export function IconSeat(props) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <path d="M8 3.5h8a1 1 0 0 1 1 1V11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
+      <path d="M4.5 14.5h15" />
+      <path d="M7 14.5V20M17 14.5V20" />
+    </svg>
+  )
+}
+
 export function IconClock(props) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>

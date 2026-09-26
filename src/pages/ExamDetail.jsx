@@ -4,8 +4,11 @@ import {
   getExamStatus,
   getDayName,
   formatDate,
+  formatDateMedium,
   formatTime,
+  formatTimeRange,
   formatDuration,
+  parseSeat,
 } from '../lib/status.js'
 import { useNow } from '../lib/use-now.js'
 import {
@@ -21,6 +24,7 @@ import {
   IconUsers,
   IconAlarm,
   IconTimer,
+  IconSeat,
 } from '../components/icons.jsx'
 
 const statusCopy = {
@@ -41,6 +45,44 @@ function DetailRow({ icon: Icon, label, value }) {
         <span className="detail-row__value">{value}</span>
       </div>
     </div>
+  )
+}
+
+// Seat + venue panel. Prominent because these are the two things a student
+// needs on exam day.
+function SeatPanel({ exam }) {
+  const seat = parseSeat(exam.seat)
+  if (!exam.venue && !seat) return null
+
+  return (
+    <section className="seat-panel" aria-label="Venue and seating">
+      <div className="seat-panel__head">
+        <span className="seat-panel__label">
+          <IconSeat className="seat-panel__label-icon" />
+          Exam-day info
+        </span>
+      </div>
+
+      {exam.venue && (
+        <div className="seat-panel__row">
+          <span className="seat-panel__row-label">Venue</span>
+          <span className="seat-panel__row-value seat-panel__row-value--venue">{exam.venue}</span>
+        </div>
+      )}
+
+      {seat && (
+        <div className="seat-panel__row seat-panel__row--seat">
+          <span className="seat-panel__row-label">Seat details</span>
+          <span className="seat-panel__row-value">{seat.raw}</span>
+          <span className="seat-panel__row-note">
+            Seat {seat.seat}
+            {seat.row ? ` · Row ${seat.row}` : ''}
+            {seat.col ? ` · Col ${seat.col}` : ''}
+            {seat.reporting ? ` · Report by ${seat.reporting}` : ''}
+          </span>
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -77,9 +119,7 @@ export default function ExamDetail() {
   }
 
   const status = getExamStatus(exam, now)
-  const time = exam.startTime
-    ? `${formatTime(exam.startTime)}${exam.endTime ? ` – ${formatTime(exam.endTime)}` : ''}`
-    : null
+  const time = formatTimeRange(exam.startTime, exam.endTime)
   const duration = formatDuration(exam.startTime, exam.endTime)
 
   const StatusIcon = status === 'today' ? IconSparkle : status === 'completed' ? IconCheck : IconCalendar
@@ -106,12 +146,15 @@ export default function ExamDetail() {
         </p>
       </section>
 
+      <SeatPanel exam={exam} />
+
       <section className="card detail-list" aria-label="Exam details">
-        <DetailRow icon={IconCalendar} label="Date" value={`${formatDate(exam.date)} · ${getDayName(exam.date)}`} />
+        <DetailRow icon={IconCalendar} label="Date" value={`${formatDateMedium(exam.date)} · ${getDayName(exam.date)}`} />
         <DetailRow icon={IconClock} label="Exam time" value={time} />
         <DetailRow icon={IconAlarm} label="Reporting" value={exam.reportingTime ? formatTime(exam.reportingTime) : null} />
         <DetailRow icon={IconTimer} label="Duration" value={duration} />
         <DetailRow icon={IconPin} label="Venue" value={exam.venue} />
+        <DetailRow icon={IconSeat} label="Seat details" value={exam.seat} />
         <DetailRow icon={IconTag} label="Type" value={exam.examType} />
         <DetailRow icon={IconHash} label="Course ID" value={exam.courseId} />
         <DetailRow icon={IconUsers} label="Batch / Group" value={exam.batch} />

@@ -6,7 +6,9 @@
 // date           : "YYYY-MM-DD" (local, machine-readable)
 // startTime/endTime : "HH:MM" 24-hour format ("09:30", "14:00")
 // reportingTime  : "HH:MM" — exam reporting (gate) time, when available
-// venue/examType/courseId/batch : optional — omit or use null to hide on the UI
+// venue          : individual exam hall (e.g. "SJT711")
+// seat           : "seat/row/col/reporting-time" exactly as issued, e.g. "45/R2C7/04:00 PM"
+// examType/courseId/batch : optional — omit or use null to hide on the UI
 // ============================================================================
 
 export const CONFIG = {
@@ -28,7 +30,8 @@ export const exams = [
     reportingTime: '13:30',
     startTime: '14:00',
     endTime: '15:30',
-    venue: 'AN1',
+    venue: 'SJT204',
+    seat: '46/R2C8/01:30 PM',
   },
   {
     id: 'MACSE513',
@@ -41,7 +44,8 @@ export const exams = [
     reportingTime: '16:00',
     startTime: '16:30',
     endTime: '18:00',
-    venue: 'AN2',
+    venue: 'SJT710',
+    seat: '63/R4C9/04:00 PM',
   },
   {
     id: 'MACSE512',
@@ -54,7 +58,8 @@ export const exams = [
     reportingTime: '16:00',
     startTime: '16:30',
     endTime: '18:00',
-    venue: 'AN2',
+    venue: 'SJT215',
+    seat: '18/R2C4/04:00 PM',
   },
   {
     id: 'MACSE515',
@@ -67,7 +72,8 @@ export const exams = [
     reportingTime: '16:00',
     startTime: '16:30',
     endTime: '18:00',
-    venue: 'AN2',
+    venue: 'SJT222',
+    seat: '45/R2C7/04:00 PM',
   },
   {
     id: 'MACSE511',
@@ -80,7 +86,8 @@ export const exams = [
     reportingTime: '16:00',
     startTime: '16:30',
     endTime: '18:00',
-    venue: 'AN2',
+    venue: 'SJT711',
+    seat: '45/R2C7/04:00 PM',
   },
   {
     id: 'MACSE514',
@@ -93,7 +100,8 @@ export const exams = [
     reportingTime: '16:00',
     startTime: '16:30',
     endTime: '18:00',
-    venue: 'AN2',
+    venue: 'SJT124',
+    seat: '52/R5C8/04:00 PM',
   },
   {
     id: 'MASTS601',
@@ -106,7 +114,8 @@ export const exams = [
     reportingTime: '14:45',
     startTime: '15:15',
     endTime: '16:30',
-    venue: 'AN2',
+    venue: 'PRP706',
+    seat: '19/R8C2/02:45 PM',
   },
 ]
 

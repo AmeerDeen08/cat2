@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom'
-import { getExamStatus, getDayName, formatDateShort, formatTime } from '../lib/status.js'
-import { IconCalendar, IconClock, IconPin } from './icons.jsx'
+import {
+  getExamStatus,
+  getDayName,
+  formatDateShort,
+  formatTimeRange,
+  parseSeat,
+} from '../lib/status.js'
+import { IconCalendar, IconClock, IconPin, IconSeat } from './icons.jsx'
 
 const badgeByStatus = {
   upcoming: 'badge badge--upcoming badge--dot',
@@ -11,6 +17,7 @@ const badgeByStatus = {
 export default function ExamCard({ exam, now = new Date() }) {
   const status = getExamStatus(exam, now)
   const dot = status === 'completed' ? '' : ' badge--dot'
+  const seat = parseSeat(exam.seat)
 
   return (
     <Link to={`/exam/${exam.id}`} className="card card--interactive exam-card">
@@ -30,8 +37,7 @@ export default function ExamCard({ exam, now = new Date() }) {
         {exam.startTime && (
           <span className="meta-row">
             <IconClock className="meta-row__icon" />
-            {formatTime(exam.startTime)}
-            {exam.endTime ? ` – ${formatTime(exam.endTime)}` : ''}
+            {formatTimeRange(exam.startTime, exam.endTime)}
           </span>
         )}
         {exam.venue && (
@@ -41,6 +47,14 @@ export default function ExamCard({ exam, now = new Date() }) {
           </span>
         )}
       </div>
+
+      {seat && (
+        <div className="exam-card__seat">
+          <IconSeat className="exam-card__seat-icon" />
+          <span className="exam-card__seat-label">Seat</span>
+          <span className="exam-card__seat-value">{seat.raw}</span>
+        </div>
+      )}
     </Link>
   )
 }

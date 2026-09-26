@@ -75,6 +75,16 @@ export function getNextEvent(events, now = new Date()) {
     .sort((a, b) => parseDateOnly(a.date).getTime() - parseDateOnly(b.date).getTime())[0] || null
 }
 
+// What the homepage hero renders, derived purely from exam data + `now`:
+//   { status: 'upcoming' | 'today' | 'completed', exam, event }
+// An exam in progress right now counts as the current exam. When every CAT2
+// exam has finished, exam is null and the next academic event (if any) is used.
+export function getNextUp(exams, events, now = new Date()) {
+  const exam = getNextExam(exams, now)
+  if (exam) return { status: getExamStatus(exam, now), exam, event: null }
+  return { status: 'completed', exam: null, event: getNextEvent(events, now) }
+}
+
 // Single source for the homepage hero:
 //   { status, daysLeft, nextExam, nextEvent }
 // status: 'upcoming' (X days to go) | 'today' (exam today) | 'completed'
@@ -99,6 +109,21 @@ export function getCountdown(exams, events, now = new Date()) {
 
 // ---------------- formatting helpers ----------------
 
+const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
+
 export function getDayName(dateOrStr) {
   const d = typeof dateOrStr === 'string' ? parseDateOnly(dateOrStr) : dateOrStr
   return d.toLocaleDateString('en-US', { weekday: 'long' })
@@ -121,6 +146,35 @@ export function formatDateShort(dateStr) {
     month: 'short',
     day: 'numeric',
   })
+}
+
+// "Wednesday, 30 September 2026"
+export function formatDateLong(dateStr) {
+  return `${getDayName(dateStr)}, ${formatDateMedium(dateStr)}`
+}
+
+// "30 September 2026" (day-first, matching the official timetable wording)
+export function formatDateMedium(dateStr) {
+  const d = parseDateOnly(dateStr)
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`
+}
+
+// Splits an issued seat string such as "45/R2C7/04:00 PM" into its parts so the
+// UI can lead with the seat number. Never throws: unknown shapes fall back to
+// a plain seat label with no row/column split.
+export function parseSeat(seatStr) {
+  if (!seatStr) return null
+  const [seat, position, reporting] = String(seatStr)
+    .split('/')
+    .map((part) => part.trim())
+  if (!seat) return null
+  return {
+    seat,
+    row: position?.match(/R\s*\d+/i)?.[0]?.replace(/\s+/g, '') ?? null,
+    col: position?.match(/C\s*\d+/i)?.[0]?.replace(/\s+/g, '') ?? null,
+    reporting: reporting || null,
+    raw: String(seatStr),
+  }
 }
 
 // "14:00" -> "2:00 PM"
@@ -153,4 +207,11 @@ export function formatTimeCompact(timeStr) {
   const hour12 = h % 12 === 0 ? 12 : h % 12
   const suffix = h < 12 ? 'AM' : 'PM'
   return m === 0 ? `${hour12} ${suffix}` : `${hour12}:${String(m).padStart(2, '0')} ${suffix}`
+}
+
+// "16:30" + "18:00" -> "4:30 PM – 6:00 PM" (null when there is no start time)
+export function formatTimeRange(startTime, endTime) {
+  if (!startTime) return null
+  const start = formatTime(startTime)
+  return endTime ? `${start} – ${formatTime(endTime)}` : start
 }

@@ -64,12 +64,21 @@ async function run() {
       return {
         title: t('.page-header__title'),
         subtitle: t('.page-header__subtitle'),
-        heroLabel: t('.hero__label'),
-        heroNumber: t('.hero__number'),
-        heroUnit: t('.hero__unit'),
-        heroSub: t('.hero__sub'),
-        heroDate: t('.hero-meta__date'),
-        heroSubject: t('.hero-meta__subject'),
+        heroEyebrow: t('.hero__eyebrow-label'),
+        heroPill: t('.hero__pill'),
+        heroSubject: t('.hero__subject'),
+        heroCode: t('.hero__code'),
+        heroWhen: [...document.querySelectorAll('.hero__when-cell')].map((c) => ({
+          label: c.querySelector('.hero__when-label')?.textContent?.trim(),
+          value: c.querySelector('.hero__when-value')?.textContent?.trim(),
+          note: c.querySelector('.hero__when-note')?.textContent?.trim(),
+        })),
+        heroVenue: t('.hero-venue__value'),
+        heroSeat: t('.hero-seat__value'),
+        heroSeatNote: t('.hero-seat__note'),
+        heroCta: t('.hero__cta'),
+        cardSeats: [...document.querySelectorAll('.exam-card__seat-value')].map((e) => e.textContent.trim()),
+        cardVenues: [...document.querySelectorAll('.exam-card .meta-row')].map((e) => e.textContent.trim()),
         quickLinks: [...document.querySelectorAll('.quick-card__title')].map((e) => e.childNodes[0].textContent.trim()),
         overflowX: doc.scrollWidth > doc.clientWidth,
       }
@@ -81,7 +90,7 @@ async function run() {
 
   ws.close()
   chrome.kill()
-  if (!r.heroLabel) process.exit(2)
+  if (!r.heroEyebrow) process.exit(2)
 }
 
 run().catch((e) => {

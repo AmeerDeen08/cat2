@@ -1,74 +1,137 @@
 import { Link } from 'react-router-dom'
 import { exams, events, CONFIG } from '../data/exams.js'
-import { getCountdown, getExamStatus, formatDate, getDayName } from '../lib/status.js'
+import {
+  getNextUp,
+  getExamStatus,
+  daysUntil,
+  formatDateShort,
+  formatDateLong,
+  formatDateMedium,
+  formatTimeRange,
+  formatTime,
+  getDayName,
+  parseSeat,
+} from '../lib/status.js'
 import { useNow } from '../lib/use-now.js'
 import ExamCard from '../components/ExamCard.jsx'
-import { IconCalendar, IconNotes, IconExternal, IconSparkle, IconCheck } from '../components/icons.jsx'
+import { IconCalendar, IconNotes, IconExternal, IconCheck, IconPin, IconSeat, IconArrowRight } from '../components/icons.jsx'
 
-function Hero({ countdown, now }) {
-  const { status, daysLeft, nextExam, nextEvent } = countdown
-
-  let number
-  let unit
-  let sub
-  if (status === 'upcoming') {
-    number = daysLeft
-    unit = daysLeft === 1 ? 'day to go' : 'days to go'
-    sub = `Your next CAT2 exam is approaching.`
-  } else if (status === 'today') {
-    number = 'Today'
-    unit = 'exam day'
-    sub = `CAT2 is happening today.`
-  } else {
-    number = 'Done'
-    unit = 'CAT2 completed'
-    sub = nextEvent
-      ? `Next up: ${nextEvent.name}.`
-      : 'All CAT2 exams have ended.'
-  }
-
-  const heroDetail = nextExam ? (
-    <>
-      <span className="hero-meta__date">
-        {formatDate(nextExam.date)} · {getDayName(nextExam.date)}
+function HeroVenue({ venue }) {
+  if (!venue) return null
+  return (
+    <div className="hero-venue">
+      <span className="hero-venue__icon">
+        <IconPin />
       </span>
-      <span className="hero-meta__subject">{nextExam.subject}</span>
-    </>
-  ) : nextEvent ? (
-    <>
-      <span className="hero-meta__date">
-        {formatDate(nextEvent.date)} · {getDayName(nextEvent.date)}
+      <span className="hero-venue__body">
+        <span className="hero-venue__label">Venue</span>
+        <span className="hero-venue__value">{venue}</span>
       </span>
-      <span className="hero-meta__subject">{nextEvent.name}</span>
-    </>
-  ) : null
+    </div>
+  )
+}
+
+function HeroSeat({ seat }) {
+  const parsed = parseSeat(seat)
+  if (!parsed) return null
+  return (
+    <div className="hero-seat">
+      <span className="hero-seat__icon">
+        <IconSeat />
+      </span>
+      <span className="hero-seat__body">
+        <span className="hero-seat__label">Seat details</span>
+        <span className="hero-seat__value">{parsed.raw}</span>
+        <span className="hero-seat__note">
+          Seat {parsed.seat}
+          {parsed.row ? ` · Row ${parsed.row}` : ''}
+          {parsed.col ? ` · Col ${parsed.col}` : ''}
+        </span>
+      </span>
+    </div>
+  )
+}
+
+function HeroExam({ exam, status, now }) {
+  const daysLeft = daysUntil(exam, now)
+  const pill =
+    status === 'today' ? 'Happening now' : daysLeft === 0 ? 'Today' : `In ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'}`
 
   return (
-    <section className="hero" aria-label="CAT2 countdown">
-      <div className="hero__label">
-        {status === 'upcoming' && <IconSparkle className="hero__label-icon" />}
-        {status === 'today' && <IconCalendar className="hero__label-icon" />}
-        {status === 'completed' && <IconCheck className="hero__label-icon" />}
-        {status === 'upcoming' && 'CAT2 countdown'}
-        {status === 'today' && 'Exam is today'}
-        {status === 'completed' && 'CAT2 completed'}
+    <Link to={`/exam/${exam.id}`} className="hero card card--interactive" aria-label={`${exam.subject} exam details`}>
+      <div className="hero__eyebrow">
+        <span className="hero__eyebrow-label">{status === 'today' ? 'Exam today' : 'Next exam'}</span>
+        <span className={`badge badge--${status === 'today' ? 'today' : 'upcoming'} hero__pill`}>{pill}</span>
       </div>
 
-      <div className="hero__count">
-        <span className="hero__number">{number}</span>
-        <span className="hero__unit">{unit}</span>
+      <h2 className="hero__subject">{exam.subject}</h2>
+      <p className="hero__code">
+        {exam.subjectCode}
+        {exam.examType ? ` · ${exam.examType}` : ''}
+      </p>
+
+      <div className="hero__when">
+        <div className="hero__when-cell">
+          <span className="hero__when-label">Date</span>
+          <span className="hero__when-value">{getDayName(exam.date)}</span>
+          <span className="hero__when-note">{formatDateMedium(exam.date)}</span>
+        </div>
+        <div className="hero__when-cell">
+          <span className="hero__when-label">Exam time</span>
+          <span className="hero__when-value">{formatTimeRange(exam.startTime, exam.endTime)}</span>
+          <span className="hero__when-note">
+            {exam.reportingTime ? `Report by ${formatTime(exam.reportingTime)}` : exam.examType || ''}
+          </span>
+        </div>
       </div>
 
-      <p className="hero__sub">{sub}</p>
-      {heroDetail && <div className="hero-meta">{heroDetail}</div>}
+      <HeroVenue venue={exam.venue} />
+      <HeroSeat seat={exam.seat} />
+
+      <span className="hero__cta">
+        Exam details
+        <IconArrowRight className="hero__cta-icon" />
+      </span>
+    </Link>
+  )
+}
+
+function HeroCompleted({ event }) {
+  return (
+    <section className="hero hero--completed card" aria-label="CAT2 completed">
+      <div className="hero__eyebrow">
+        <span className="hero__eyebrow-icon">
+          <IconCheck />
+        </span>
+        <span className="hero__eyebrow-label">Cat2 completed</span>
+      </div>
+      <h2 className="hero__subject">All CAT2 exams are done</h2>
+      {event ? (
+        <div className="hero__when hero__when--single">
+          <div className="hero__when-cell">
+            <span className="hero__when-label">Next event</span>
+            <span className="hero__when-value">{event.name}</span>
+            <span className="hero__when-note">{formatDateLong(event.date)}</span>
+          </div>
+        </div>
+      ) : (
+        <p className="hero__sub">Keep the seat and venue details handy for the next cycle.</p>
+      )}
     </section>
   )
 }
 
+function Hero({ nextUp, now }) {
+  if (!nextUp.exam) return <HeroCompleted event={nextUp.event} />
+  return <HeroExam exam={nextUp.exam} status={nextUp.status} now={now} />
+}
+
 export default function Home() {
   const now = useNow()
-  const countdown = getCountdown(exams, events, now)
+  const nextUp = getNextUp(exams, events, now)
   const upcoming = exams.filter((e) => getExamStatus(e, now) !== 'completed')
+  const first = exams[0]
+  const last = exams[exams.length - 1]
 
   return (
     <>
@@ -76,14 +139,11 @@ export default function Home() {
         <p className="page-header__eyebrow">{CONFIG.institution}</p>
         <h1 className="page-header__title">{CONFIG.cat2Label}</h1>
         <p className="page-header__subtitle">
-          {countdown.status === 'upcoming' &&
-            `${countdown.daysLeft} ${countdown.daysLeft === 1 ? 'day' : 'days'} until your next CAT2 exam`}
-          {countdown.status === 'today' && 'Your next CAT2 exam is today'}
-          {countdown.status === 'completed' && 'CAT2 has wrapped — check what is next'}
+          {exams.length} exams · {formatDateShort(first.date)} – {formatDateShort(last.date)} · seats &amp; venues
         </p>
       </header>
 
-      <Hero countdown={countdown} now={now} />
+      <Hero nextUp={nextUp} now={now} />
 
       {upcoming.length > 0 && (
         <section aria-label="Upcoming exams">
